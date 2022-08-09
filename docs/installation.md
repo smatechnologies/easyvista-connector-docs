@@ -30,8 +30,8 @@ Copy the supplied install file SMAEasyVistaConnector-win.zip and extract it into
 After the installation is complete, the root installation directory contains the connector executable (EasyVista.exe), the encryption software executable (Encrypt.exe), the Connector.config file and four directories, java, joblogs, templates and log. The java directory contains the java software required to execute the connector (OpenJDK 11), the joblogs directory is used to temporarily contain job logs extracted from the OpCon system, the log directory contains the connector log files and the templates directory contains the EasyVista template files.
 
 ### EasyVista Connector Installation
-The Asysco AMT connector can be installed on any Windows Server as long as there is an OpCon MSLSAM Agent installed on that Windows Server.
-Copy the downloaded install file AsyscoAmtConnector-win.zip and extract it into a temp directory (c:\temp). Extract the information including sub-directories into the required directory.
+The EasyVista connector can be installed on the OpCon Windows Server.
+Copy the downloaded install file SMAEasyVistaConnector-win.zip and extract it into a temp directory (c:\temp). Extract the information including sub-directories into the required directory.
 
 #### Create $SCHEDULE DATE-EVIS Global Property
 Create the special **$SCHEDULE DATE-EVIS** global property that contains the schedule date in the yyyy-MM-dd format from the standard $SCHEDULE DATE property. Set the value to **yyyy-MM-dd**.
@@ -112,16 +112,16 @@ A template includes the following definitions:
 Attribute Name Name | Value
 --------- | -----------
 **descriptionDefinition**	                   | Defines the description to use instead of the default description defined in the Connector.config. See section on Customized Description and Title Definitions.
-**titleDefinition**                            |	Defines the title to use instead of the default description defined in the Connector.config. See section on Customized Description and Title Definitions.
-**server**                                     |	header - Defines the address, the company value and the template to display the incident associated with the EasyVista Instance
-**address**                                    |	The address associated with the EasyVista instance (i.e. production, test)
-**usesTls**                                    |	If the EasyVista instance requires TLS. Value either true or false (default true).
-**company**                                    |	A string representing the company which is included in the URL when communicating with EasyVista. 
-**viewIncidentUrlTemplate**                    |	The URL definition that can be used display the incident ticket in EasyVista. This url is invoked when the Incident Ticket ID of the job is selected in Solution Manager. See Generate AutoConnection Link section for information on generating this value.
+**titleDefinition**                            | Defines the title to use instead of the default description defined in the Connector.config. See section on Customized Description and Title Definitions.
+**server**                                     | header - Defines the address, the company value and the template to display the incident associated with the EasyVista Instance
+**address**                                    | The address associated with the EasyVista instance (i.e. production, test)
+**usesTls**                                    | If the EasyVista instance requires TLS. Value either true or false (default true).
+**company**                                    | A string representing the company which is included in the URL when communicating with EasyVista. 
+**viewIncidentUrlTemplate**                    | The URL definition that can be used display the incident ticket in EasyVista. This url is invoked when the Incident Ticket ID of the job is selected in Solution Manager. See Generate AutoConnection Link section for information on generating this value.
 **rules**                                      | header - Defines what functions are supported by the connector.
-**includeJobLogAttachment**                    |	Indicates if the job log should be attached to the incident ticket. Value either true or false (default true).
+**includeJobLogAttachment**                    | Indicates if the job log should be attached to the incident ticket. Value either true or false (default true).
 **includeTagRouting**                          | Indicates if User defined tags should be used for incident routing purposes. Value either true or false (default false). 
-**includeCorrelationId**                       |	Indicates if the correlation information should be included in the information submitted to EasyVista. Value either true or false (default false).
+**includeCorrelationId**                       | Indicates if the correlation information should be included in the information submitted to EasyVista. Value either true or false (default false).
 **useTitleDefinitionForDescriptionDefinition** | Indicates if the title definition should be used for the value of the description attribute. Value either true or false (default false).
 **credentials**                                | header	
 **user**                                       | The user which has the required privileges to connect to the EasyVista System to submit requests. The name must be encrypted using the Encrypt.exe utility.
@@ -356,6 +356,7 @@ Using Notification Manager, select the Jobs tab and create a new Group called Ea
 Once the Group has been created, select the EasyVista Group, perform a ‘right-click’ and select Add Job Trigger. In the Add Job Trigger selection, select Job Failed.
 
 In the Run Command tab, enter the following:
+
 **Command**			       C:\Connectors\EasyVista\EasyVista.exe -a [[$MACHINE NAME]] -s [[$SCHEDULE NAME]] -jn [[$JOB NAME]] -e [[$JOB TERMINATION]] -sd [[$SCHEDULE DATE-EVIS]] -si [[$SCHEDULE ID]] -sn [[$SCHEDULE INST]] -t bas_easyvista.json
 
                            Where 
@@ -370,6 +371,7 @@ In the Run Command tab, enter the following:
 	                       -t bas_easyvista.json		            which template in the templates folder to use
 
 **Working Directory**		C:\Connectors\EasyVista
+
 **Batch User**			    Use Service Account 	                The batch User under which the task will be run.
 
 #### Definition of EASY-VISTA task in OpCon AdHoc workflow

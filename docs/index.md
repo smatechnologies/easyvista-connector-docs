@@ -7,6 +7,8 @@ sidebar_label: 'EasyVista Connector'
 
 The EasyVista Connector can be used to submit incident tickets automatically to EasyVista from OpCon when a task has an error condition.
 
+![EasyVista Component Overview](/img/easyvista-component-overview.png)
+
 The OpCon EasyVista implementation includes components that detect when a task errors, create the EasyVista Incident record (includes adding task job log) and inserts the incident number into the task in the Daily tables.
 
 - Notification Manager 		An OpCon feature that initiates the EasyVista Connector when a task encounters an error condition.
@@ -17,6 +19,9 @@ The OpCon EasyVista implementation includes components that detect when a task e
 
 ## Process
 The ticket creation process consists of the following steps.
+
+![Ticket Creation Process](/img/ticket-creation-process.png)
+
 1.	The EasyVista Connector is executed by the Notification Manager when a failed task is detected. The Notification Manager uses the following standard OpCon properties to pass information to the EasyVista Connector.
 
 ```
