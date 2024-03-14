@@ -5,6 +5,8 @@ sidebar_label: 'EasyVista Connector'
 
 # EasyVista Connector
 
+Latest version of the EsayVista Connector is **21.0.3**.
+
 The EasyVista Connector can be used to submit incident tickets automatically to EasyVista from OpCon when a task has an error condition.
 
 ![EasyVista Component Overview](../static/img/easyvista-component-overview.png)
