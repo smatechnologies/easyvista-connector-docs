@@ -123,6 +123,7 @@ Attribute Name Name | Value
 **includeTagRouting**                          | Indicates if User defined tags should be used for incident routing purposes. Value either true or false (default false). 
 **includeCorrelationId**                       | Indicates if the correlation information should be included in the information submitted to EasyVista. Value either true or false (default false).
 **useTitleDefinitionForDescriptionDefinition** | Indicates if the title definition should be used for the value of the description attribute. Value either true or false (default false).
+**doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled** | Indicates if a ticket should not be created if tag routing is enabled and no tag exists for the failed job. Value either true or false (default false).
 **credentials**                                | header	
 **user**                                       | The user which has the required privileges to connect to the EasyVista System to submit requests. The name must be encrypted using the Encrypt.exe utility.
 **password**                                   | The password of the user which has the required privileges  to connect to the EasyVista System to submit requests. The password must be encrypted using the Encrypt.exe utility .
@@ -169,7 +170,8 @@ The tags section defines incident routing information if OpCon Job User defined 
     "includeJobLogAttachment" : true,
     "includeTagRouting" : false,
     "includeCorrelationId" : true,
-    "useTitleDefinitionForDescriptionDefinition" : false
+    "useTitleDefinitionForDescriptionDefinition" : false,
+    "doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled" : false
   },
   "credentials" : {
     "user" : "633231686447566a61413d3d",
@@ -245,7 +247,8 @@ The above sample template uses environment variables for the description and tit
     "includeJobLogAttachment" : true,
     "includeTagRouting" : false,
     "includeCorrelationId" : true,
-    "useTitleDefinitionForDescriptionDefinition" : false
+    "useTitleDefinitionForDescriptionDefinition" : false,
+    "doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled" : false
   },
   "credentials" : {
     "user" : "633231686447566a61413d3d",
