@@ -123,22 +123,22 @@ Attribute Name Name | Value
 **includeTagRouting**                          | Indicates if User defined tags should be used for incident routing purposes. Value either true or false (default false). 
 **includeCorrelationId**                       | Indicates if the correlation information should be included in the information submitted to EasyVista. Value either true or false (default false).
 **useTitleDefinitionForDescriptionDefinition** | Indicates if the title definition should be used for the value of the description attribute. Value either true or false (default false).
-**doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled** | Indicates if a ticket should not be created if tag routing is enabled and no tag exists for the failed job. Value either true or false (default false).
+(default false).
 **credentials**                                | header	
 **user**                                       | The user which has the required privileges to connect to the EasyVista System to submit requests. The name must be encrypted using the Encrypt.exe utility.
 **password**                                   | The password of the user which has the required privileges  to connect to the EasyVista System to submit requests. The password must be encrypted using the Encrypt.exe utility .
-**ticketDefinitions**	                       | header - Defines attributes that will added to the JSON payload. 
+**ticketDefinitions**	                         | header - Defines attributes that will added to the JSON payload. 
 **indicator**                                  | A name that identifies this attribute to the connector.
-**attribute**	                               | Defines the attribute name that will be added to the JSON payload along with the value.
-**value**	                                   | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
+**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
+**value**	                                     | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
 **ticketAdditionalFields**                     | header - Defines additional attributes that will added to the JSON payload. See EasyVista REST-API documentation for additional fields that can be included in the JSON payload.
 **indicator** 	                               | A name that identifies this attribute to the connector. 
-**attribute**	                               | Defines the attribute name that will be added to the JSON payload along with the value.
-**value**	                                   | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
+**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
+**value**	                                     | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
 **tags**                                       | header - Defines information if OpCon User defined Tags are to be used to include attributes in the ServiceNow submission. This is enabled if the rule **includeTagRouting** is set to True.
-**indicator**                                  | Defines what part of the tag should be used to identify the request. Supports TAG_END,  TAG_START or DEFAULT. The DEFAULT value is used if there is no TAG_END or TAG_START match and TAG Routing is enabled.
+**indicator**                                  | Defines what part of the tag should be used to identify the request. Supports TAG_END,  TAG_START, EXIT or DEFAULT. The DEFAULT value is used if there is no TAG_END or TAG_START match and TAG Routing is enabled.
 **indicatorValue**	                           | The value that is matched to the OpCon User defined tag (either the end or the start).
-**attribute**	                               | Defines the attribute name that will be added to the JSON payload along with the value.
+**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
 **value**                                      | The value associated with the attribute.
 
 The server section of the template defines the address information associated with the EasyVista Instance. This allows a single connector the ability to submit requests to multiple EasyVista instances by simply creating multiple templates. The server section is required.
@@ -151,7 +151,23 @@ The ticketDefinitions section defines required attributes that will be added to 
 
 The ticketAdditionalFields section defines optional attributes that will be added to the payload. 
 
-The tags section defines incident routing information if OpCon Job User defined tags are used to route tickets. This functionality is enabled when the includeTagRouting rule is set to true. Routing can be done by defining strings that either start (TAG_START) or end (TAG_END) a tag. If no values are found and the **includeTagRouting** rule is set to true,  then the DEFAULT value will be used. It is possible to add multiple attributes for a routing condition.
+The tags section defines incident routing information if OpCon Job User defined tags are used to route tickets. This functionality is enabled when the includeTagRouting rule is set to true. 
+The OpCon task tag definition can therefore be used to determine the routing of the ticket within the EasyVista environment. It is possible to define multiple attributes for each tag definition (except EXIT tag).
+
+Tag matching is performed, by first checking for an EXIT tag, followed by TAG_START and TAG_END values. 
+
+If a matching **EXIT** tag is found, no ticket is created. 
+If matching **TAG_END** or **TAG_START** values are found, the associated attributes will be included in the ticket creation request.
+If no match is found, the **DEFAULT** associated attributes will be included in the ticket creation.
+
+Tag routing is defined using the **tags** structure.
+
+Indicator     | Description
+------------- | --------------------------------------------------------
+**EXIT**      | Performs a match of against the complete job tag. 
+**TAG_START** | Indicates that the job tags will be checked for a matching value (**Indicator Value** field) from the start of each job tag in the list of tags.
+**TAG_END**   | Indicates that the job tags will be checked for a matching value (**Indicator Value** field) from the end of each job tag in the list of tags.
+**DEFAULT**   | Defines the attributes to used when there is no tag match. 
 
 ```
 {
@@ -170,8 +186,7 @@ The tags section defines incident routing information if OpCon Job User defined 
     "includeJobLogAttachment" : true,
     "includeTagRouting" : false,
     "includeCorrelationId" : true,
-    "useTitleDefinitionForDescriptionDefinition" : false,
-    "doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled" : false
+    "useTitleDefinitionForDescriptionDefinition" : false
   },
   "credentials" : {
     "user" : "633231686447566a61413d3d",
@@ -222,6 +237,13 @@ The tags section defines incident routing information if OpCon Job User defined 
           "attribute" : "",
           "value" : ""
       },{
+          "attribute" : "",
+          "value" : ""
+      }]
+  },{
+      "indicator" : "EXIT",
+      "indicatorValue" : "NOTICKET",
+      "attributes" : [ {
           "attribute" : "",
           "value" : ""
       }]
@@ -247,8 +269,7 @@ The above sample template uses environment variables for the description and tit
     "includeJobLogAttachment" : true,
     "includeTagRouting" : false,
     "includeCorrelationId" : true,
-    "useTitleDefinitionForDescriptionDefinition" : false,
-    "doNotCreateTicketIfNoTagExistsAndTagRoutingEnabled" : false
+    "useTitleDefinitionForDescriptionDefinition" : false
   },
   "credentials" : {
     "user" : "633231686447566a61413d3d",
@@ -299,6 +320,13 @@ The above sample template uses environment variables for the description and tit
           "attribute" : "",
           "value" : ""
       },{
+          "attribute" : "",
+          "value" : ""
+      }]
+  },{
+      "indicator" : "EXIT",
+      "indicatorValue" : "NOTICKET",
+      "attributes" : [ {
           "attribute" : "",
           "value" : ""
       }]
