@@ -4,6 +4,17 @@
 
 This release of EasyVista is for opCon System 21.0 or greater. The connector only supports connections to the OpCon-API to retrieve job information and insert or update Incident information. 
 
+## Release 21.1.5
+
+### Migration Considerations
+
+When upgrading to the latest release the TOKEN value of the OPCON API section in the Connector.config file should be encrypted using the Exncrypt.exe software .
+
+### New Features
+
+**CON-370**    
+                    Implemented the encryption of the TOKEN value in the Connector.config using the Excrypt.exe software
+                     
 ## Release 21.0.4
 
 ### Migration Considerations
