@@ -2,7 +2,6 @@
 slug: '/'
 sidebar_label: 'EasyVista Connector'
 hide_table_of_contents: true
-displayed_sidebar: null
 ---
 
 # EasyVista Connector
