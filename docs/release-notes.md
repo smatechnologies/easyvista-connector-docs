@@ -1,98 +1,73 @@
-# Release Notes EasyVista
+---
+sidebar_label: 'Release notes'
+title: EasyVista Connector release notes
+description: "Version history and change details for the EasyVista Connector, including new features, improvements, and bug fixes."
+tags:
+  - Reference
+  - System Administrator
+  - Automation Engineer
+---
 
-## General
+# EasyVista Connector release notes
 
-This release of EasyVista is for opCon System 21.0 or greater. The connector only supports connections to the OpCon-API to retrieve job information and insert or update Incident information. 
+This connector requires OpCon Release 21.0 or higher.
 
-## Release 21.1.5
+## 21
 
-### Migration Considerations
+### 21.1.5
 
-When upgrading to the latest release the TOKEN value of the OPCON API section in the Connector.config file should be encrypted using the Exncrypt.exe software .
+### What's new
 
-### New Features
+**CON-370**: Implemented encryption of the `TOKEN` value in `Connector.config` using the `Encrypt.exe` utility.
 
-**CON-370**    
-                    Implemented the encryption of the TOKEN value in the Connector.config using the Excrypt.exe software
-                     
-## Release 21.0.4
+### Why this matters
 
-### Migration Considerations
+Token values stored in `Connector.config` must now be encrypted using `Encrypt.exe` before use. This protects OpCon API credentials at rest and aligns the connector with the encryption standard applied to other credential values in the configuration file.
 
-When upgrading to the latest release and tag routing is enabled, the DEFAULT tag value must be defined, otherwise the connector will terminate with the following message :
-**Connector terminated due to configuration error - tag routing enabled, but no default routing tag defined **.
+### Upgrade notes
 
-### New Features
+When upgrading to 21.1.5, encrypt the `TOKEN` value in the `[OPCON API]` section of `Connector.config` using `Encrypt.exe` before restarting the connector.
 
-**CONNUTIL-639**    
-                    Implemented new tag type called **EXIT** to exit connector and not create an incident ticket when a matching job tag is encountered. Only works when tag routing enabled.  
+---
 
-                    To implement this, the existing EasyVista template must be updated to include an EXIT tag in the tags section of the template and the indicatorValue consist of a tag name thst will indicate no ticket should be created. In the example below, if the OpCon job contains a tag of NOTICKET then a ticket will not be created.
+### 21.0.4
 
-                    ```
-                      "tags" : [ {
-                            "indicator" : "TAG_START",
-                            "indicatorValue" : "ABC",
-                            "attributes" : [ {
-                                "attribute" : "attribute-name",
-                                "value" : "attribute value"
-                            }]
-                        },{
-                            "indicator" : "TAG_END",
-                            "indicatorValue" : "XYZ",
-                            "attributes" : [ {
-                                "attribute" : "attribute-name",
-                                "value" : "attribute value"
-                            }]
-                        },{
-                            "indicator" : "EXIT",
-                            "indicatorValue" : "NOTICKET",
-                            "attributes" : [ {
-                                "attribute" : "",
-                                "value" : ""
-                            }]
-                        },{
-                            "indicator" : "DEFAULT",
-                            "indicatorValue" : "DEFAULT",
-                            "attributes" : [ {
-                                "attribute" : "attribute-name",
-                                "value" : "attribute value"
-                            }]
-                        }]
+### What's new
 
-                    ```
-                    In the above example, a incident ticket will not be created if the OpCon job has a job tag of NOTICKET.
-                    The connector will be exit with the following message :
-                    **Ticket creation terminated for the job EASYVISTA-TEST.JOB001 as EXIT tag defined**. 
+**CONNUTIL-639**: Implemented a new tag type called `EXIT` that causes the connector to exit without creating an incident ticket when a matching OpCon job tag is encountered. This option is only available when tag routing is enabled.
 
-### Fixes
+To use the `EXIT` tag, add an `EXIT` entry to the `tags` section of the EasyVista template. Set `indicatorValue` to the tag name that signals no ticket should be created. When the connector finds a matching job tag, it exits with the following message:
 
-**CONNUTIL-633**    
-                    Fixed the order of the files as they appear in the EasyVista ticket to match the same order extracted from OpCon.
+```
+Ticket creation terminated for the job <schedule>.<job> as EXIT tag defined
+```
 
-**CONNUTIL-640**    
-                    Add check for DEFAULT routing tag if tag routing enabled. If DEFAULT tag not defined, terminate the connector displaying configuration error message.
+**CONNUTIL-640**: Added a validation check for the `DEFAULT` routing tag when tag routing is enabled. If the `DEFAULT` tag is not defined in the template, the connector terminates with the following message:
 
-## Release 21.0.3
+```
+Connector terminated due to configuration error - tag routing enabled, but no default routing tag defined
+```
 
-### New Features
+### Bug fixes
 
-**CONNUTIL-629**    
-                    Correctly a problem where Unix job logs were not correctly uploaded to the EasyVista Incident.
+**CONNUTIL-633**: Fixed the order in which files appear in the EasyVista ticket to match the order extracted from OpCon.
 
-### Fixes
+### Upgrade notes
 
+When upgrading to 21.0.4 with tag routing enabled, verify that a `DEFAULT` tag is defined in each template. If the `DEFAULT` tag is missing, the connector will not start.
 
-## Release 21.0.2
+---
 
-### New Features
+### 21.0.3
 
-**CONNUTIL-575**    
-                    Altered WS Client to ignore unknown API fields
+### What's new
 
-### Fixes
+**CONNUTIL-629**: Fixed an issue where Unix job logs were not correctly uploaded to the EasyVista incident.
 
+---
 
+### 21.0.2
 
+### What's new
 
-
+**CONNUTIL-575**: Updated the web service client to ignore unknown API fields returned by the EasyVista REST API.

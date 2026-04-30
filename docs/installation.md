@@ -1,82 +1,106 @@
-# Installation
+---
+title: EasyVista Connector installation
+description: "Install, configure, and connect the EasyVista Connector to OpCon and EasyVista so that incident tickets are created automatically when jobs fail."
+sidebar_label: 'Installation'
+tags:
+  - Procedural
+  - System Administrator
+  - Installation
+---
 
-The EasyVista Connector installation consists of multiple steps that are required to complete the installation successfully. 
+# EasyVista Connector installation
 
-The connector requires a SMA OpCon Windows Agent to provide the connection between Notification Manager in the OpCon System and the EasyVista Connector software. 
-It requires the OpCon Rest-API to extract the unique id of the task in the daily tables and the retrieval of the task's job log.
-It uses the OpCon connection to update the returned incident number in the task in the Daily tables.
+## What is it?
 
-## Supported Software Levels
-The following software levels are required to implement the Asysco AMT Connector.
+The EasyVista Connector installation sets up the software that allows OpCon to automatically create EasyVista incident tickets when jobs fail. The installation process connects the connector to the OpCon REST API and to one or more EasyVista instances through template files.
 
-- OpCon Release 21.0 or higher.
-- Embedded Java OpenJDK 11 (part of installation).
-- OpCon Rest API Configured to use TLS.
-- OpCon Windows Agent to provide link to EasyVista Connector.
-- OpCon Notification Manager.
-- An EasyVista implementation that supports the Rest API.
+Complete this installation when you need to:
+
+- Set up the EasyVista Connector for the first time on an OpCon Windows Agent
+- Configure the connector to communicate with the OpCon REST API and one or more EasyVista instances
+- Define Notification Manager rules that trigger the connector when jobs fail
+
+## Supported software levels
+
+The following software levels are required to implement the EasyVista Connector:
+
+- OpCon Release 21.0 or higher
+- Embedded Java OpenJDK 11 (included in the installation)
+- OpCon REST API configured to use TLS
+- OpCon Windows Agent to provide the link to the EasyVista Connector
+- OpCon Notification Manager
+- An EasyVista implementation that supports the REST API
 
 ## Installation
+
 The installation process consists of the following steps:
 
-- OpCon Windows Agent Installation.
-- EasyVista Connector Installation.
-- EasyVista Connector Configuration.
-- OpCon Notification Manager Definition
- 
-### OpCon Windows Agent Installation
-Copy the supplied install file SMAEasyVistaConnector-win.zip and extract it into the installation directory.
+- OpCon Windows Agent installation
+- EasyVista Connector installation
+- EasyVista Connector configuration
+- OpCon Notification Manager definition
 
-After the installation is complete, the root installation directory contains the connector executable (EasyVista.exe), the encryption software executable (Encrypt.exe), the Connector.config file and four directories, java, joblogs, templates and log. The java directory contains the java software required to execute the connector (OpenJDK 11), the joblogs directory is used to temporarily contain job logs extracted from the OpCon system, the log directory contains the connector log files and the templates directory contains the EasyVista template files.
+### OpCon Windows Agent installation
 
-### EasyVista Connector Installation
-The EasyVista connector can be installed on the OpCon Windows Server.
-Copy the downloaded install file SMAEasyVistaConnector-win.zip and extract it into a temp directory (c:\temp). Extract the information including sub-directories into the required directory.
+Copy the supplied install file `SMAEasyVistaConnector-win.zip` and extract it into the installation directory.
 
-#### Create $SCHEDULE DATE-EVIS Global Property
-Create the special **$SCHEDULE DATE-EVIS** global property that contains the schedule date in the yyyy-MM-dd format from the standard $SCHEDULE DATE property. Set the value to **yyyy-MM-dd**.
+After the installation is complete, the root installation directory contains the connector executable (`EasyVista.exe`), the encryption utility (`Encrypt.exe`), the `Connector.config` file, and four directories: `java`, `joblogs`, `templates`, and `log`. The `java` directory contains the Java software required to run the connector (OpenJDK 11). The `joblogs` directory temporarily stores job logs extracted from the OpCon system. The `log` directory contains the connector log files. The `templates` directory contains the EasyVista template files.
 
-### EasyVista Connector Configuration
+### EasyVista Connector installation
+
+The EasyVista Connector can be installed on the OpCon Windows server.
+
+To install the EasyVista Connector, complete the following steps:
+
+1. Copy the downloaded install file `SMAEasyVistaConnector-win.zip` and extract it into a temporary directory (for example, `c:\temp`).
+2. Extract the contents, including subdirectories, into the required installation directory.
+
+#### Create `$SCHEDULE DATE-EVIS` global property
+
+Create the special **`$SCHEDULE DATE-EVIS`** global property that stores the schedule date in `yyyy-MM-dd` format from the standard `$SCHEDULE DATE` property. Set the value to `yyyy-MM-dd`.
+
+### EasyVista Connector configuration
+
 The configuration of the EasyVista Connector requires setting the OpCon connection information for the OpCon system associated with the connector.
 
-All user and password values placed in the configuration and template files must be encrypted using the Encrypt.exe utility provided with the connector. 
+All user and password values placed in the configuration and template files must be encrypted using the `Encrypt.exe` utility provided with the connector.
 
-#### Encrypt Utility
-The Encrypt utility uses standard 64 bit encryption.
+#### Encrypt utility
 
-Supports a -v argument and displays the encrypted value
+The `Encrypt.exe` utility uses standard 64-bit encryption.
 
-On Windows, example on how to encrypt the value "abcdefg":
+The utility supports a `-v` argument and displays the encrypted value.
+
+To encrypt a value on Windows, run the following command:
 
 ```
 Encrypt.exe -v abcdefg
-
 ```
 
 #### Connector.config configuration
-Configure the Connector.config file in the installation directory setting the required information.
-The Connector.config contains the following values
 
-Property Name | Value
---------- | -----------
-**[GENERAL]**                       | header
-**JOBLOGDIR**                       | The name of the directory where the retrieved log files are stored. After successful attachment to the EasyVista Incident, the log file is deleted. The name is a sub directory of the installation directory (default joblogs).
-**TEMPLATESDIR**                    | The name of the directory where the template definitions are stored. The name is a sub directory of the installation directory (default templates).
-**DEBUG**                           | The Connector supports a debug mode which can be enabled by setting the value to ON. The connector should be run with DEBUG disabled (OFF) and enabled (ON) when requested to capture an error condition. Value either ON or OFF (default OFF).
-**[PROXY SERVER]**                  | header - Used to define the full URL of a proxy server if required
-**USES_PROXY**                      | Indicates if this connector should use a Proxy Server connection. Values are True or False (default False).
-**ADDRESS**                         | The address of the Proxy Server.
-**PORT**                            | The port of the Proxy Server.
-**[OPCON API]**                     | header - Used to define the connection to the OpCon API
-**ADDRESS**                         | The server address of the OpCon API.
-**PORT**                            | The port number used by the OpCon API server.
-**USES_TLS**                        | Must be set to True.
-**TOKEN**                           | An application token used for Authentication when communicating with the OpCon-API. This should be encrypted using the Except.exe software.
-**[TICKET DEFINITIONS]**            | header - Used to define information to be used when creating a ticket.
-**DESCRIPTION**                     | The text that is used when creating an incident (description field). Default value  OpCon Task Failure ( date {0} schedule {1} job {2} server {3} error code {4} ). The text is customizable. When a value is required in the text use the {n} syntax  where n is the value of the parameter defined in the table below. 0 is the schedule date when the error occurred (resolves to [[$SCHEDULE DATE-EVIS]] value), 1 is the workflow name (resolves to [[JI.SCHED]] value), 2 is the task name (resolves to [[JI.JOB]] value), 3 is the server name where the job executed (resolves to [[JI.MACH]] value) and 4 is the termination code (resolves to [[JI.ECODE]] value). 
-**TITLE**                           | The text that is used when creating an incident (description field). Default value  OpCon Task Failure (schedule {1} job {2}) The text is customizable. When a value is required in the text use the {n} syntax  where n is the value of the parameter defined in the table below. 0 is the schedule date when the error occurred (resolves to [[$SCHEDULE DATE-EVIS]] value), 1 is the workflow name (resolves to [[JI.SCHED]] value), 2 is the task name (resolves to [[JI.JOB]] value), 3 server name where the job executed (resolves to [[JI.MACH]] value) and 4 the termination code (resolves to [[JI.ECODE]] value).
+Configure the `Connector.config` file in the installation directory with the required values.
 
-Example configuration file. 
+| Property | Value |
+|---|---|
+| **[GENERAL]** | Section header |
+| **JOBLOGDIR** | The name of the directory where retrieved log files are stored. After successful attachment to the EasyVista incident, the log file is deleted. This is a subdirectory of the installation directory (default: `joblogs`) |
+| **TEMPLATESDIR** | The name of the directory where template definitions are stored. This is a subdirectory of the installation directory (default: `templates`) |
+| **DEBUG** | Enables debug mode when set to `ON`. Run with `OFF` in production; set to `ON` when troubleshooting to capture additional log detail. Values: `ON` or `OFF` (default: `OFF`) |
+| **[PROXY SERVER]** | Section header — defines a proxy server connection if required |
+| **USES_PROXY** | Indicates whether the connector should use a proxy server. Values: `True` or `False` (default: `False`) |
+| **ADDRESS** | The address of the proxy server |
+| **PORT** | The port of the proxy server |
+| **[OPCON API]** | Section header — defines the connection to the OpCon REST API |
+| **ADDRESS** | The server address of the OpCon REST API |
+| **PORT** | The port number used by the OpCon REST API server |
+| **USES_TLS** | Must be set to `True` |
+| **TOKEN** | An application token used for authentication when communicating with the OpCon REST API. This value must be encrypted using `Encrypt.exe` |
+| **[TICKET DEFINITIONS]** | Section header — defines information used when creating a ticket |
+| **DESCRIPTION** | The text used as the incident description. Default value: `OpCon Task Failure ( date {0} schedule {1} job {2} server {3} error code {4} )`. The text is customizable using `{n}` placeholder syntax, where: `{0}` = schedule date (`$SCHEDULE DATE-EVIS`), `{1}` = schedule name (`[[JI.SCHED]]`), `{2}` = job name (`[[JI.JOB]]`), `{3}` = agent name (`[[JI.MACH]]`), `{4}` = termination code (`[[JI.ECODE]]`) |
+| **TITLE** | The text used as the incident title. Default value: `OpCon Task Failure (schedule {1} job {2})`. Uses the same `{n}` placeholder syntax as DESCRIPTION |
+
+Example `Connector.config` file:
 
 ```
 [GENERAL]
@@ -98,89 +122,81 @@ TOKEN=fc0520dc-fc93-4d3a-bf2f-7d0584c69df2
 [TICKET DEFINITIONS]
 DESCRIPTION=OpCon Task Failure ( date {0} schedule {1} job {2} server {3} error code {4} )
 TITLE=OpCon Task Failure ( schedule {0} job {1} )
-
 ```
-The OPCON API section provides the information about connecting to the OpCon System using the OpCon Rest-API so the job log can be retrieved from the OpCon task. The SERVER, PORT USES_TLS and TOKEN statements provide the definitions that will allow the EasyVista connector to connect to the OpCon Rest API. The TOKEN statement contains an application token (see OpCon Rest-API documentation on how to generate an application token).
+
+The `[OPCON API]` section provides the information needed to connect to the OpCon system using the OpCon REST API so the job log can be retrieved. The `TOKEN` value contains an application token for authentication (see the OpCon REST API documentation for instructions on generating an application token).
 
 #### Templates
-Templates provide information about the EasyVista connection and the definitions that will be submitted in the JSON payload as part of the request. A default template can be found in the templates directory of the connector installation.
 
-The template includes the address of the EasyVista instance, the credentials, the rules associated with the connector, attributes to be included and tag routing definitions.
+Templates provide information about the EasyVista connection and the definitions that will be submitted in the JSON payload as part of the request. A default template is provided in the `templates` directory of the connector installation.
+
+The template includes the address of the EasyVista instance, the credentials, the rules associated with the connector, attributes to be included, and tag routing definitions.
 
 A template includes the following definitions:
 
-Attribute Name Name | Value
---------- | -----------
-**descriptionDefinition**	                   | Defines the description to use instead of the default description defined in the Connector.config. See section on Customized Description and Title Definitions.
-**titleDefinition**                            | Defines the title to use instead of the default description defined in the Connector.config. See section on Customized Description and Title Definitions.
-**server**                                     | header - Defines the address, the company value and the template to display the incident associated with the EasyVista Instance
-**address**                                    | The address associated with the EasyVista instance (i.e. production, test)
-**usesTls**                                    | If the EasyVista instance requires TLS. Value either true or false (default true).
-**company**                                    | A string representing the company which is included in the URL when communicating with EasyVista. 
-**viewIncidentUrlTemplate**                    | The URL definition that can be used display the incident ticket in EasyVista. This url is invoked when the Incident Ticket ID of the job is selected in Solution Manager. See Generate AutoConnection Link section for information on generating this value.
-**rules**                                      | header - Defines what functions are supported by the connector.
-**includeJobLogAttachment**                    | Indicates if the job log should be attached to the incident ticket. Value either true or false (default true).
-**includeTagRouting**                          | Indicates if User defined tags should be used for incident routing purposes. Value either true or false (default false). 
-**includeCorrelationId**                       | Indicates if the correlation information should be included in the information submitted to EasyVista. Value either true or false (default false).
-**useTitleDefinitionForDescriptionDefinition** | Indicates if the title definition should be used for the value of the description attribute. Value either true or false (default false).
-(default false).
-**credentials**                                | header	
-**user**                                       | The user which has the required privileges to connect to the EasyVista System to submit requests. The name must be encrypted using the Encrypt.exe utility.
-**password**                                   | The password of the user which has the required privileges  to connect to the EasyVista System to submit requests. The password must be encrypted using the Encrypt.exe utility .
-**ticketDefinitions**	                         | header - Defines attributes that will added to the JSON payload. 
-**indicator**                                  | A name that identifies this attribute to the connector.
-**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
-**value**	                                     | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
-**ticketAdditionalFields**                     | header - Defines additional attributes that will added to the JSON payload. See EasyVista REST-API documentation for additional fields that can be included in the JSON payload.
-**indicator** 	                               | A name that identifies this attribute to the connector. 
-**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
-**value**	                                     | The value that will be included with the attribute. Note that a special value DescriptionDefinition can be used which will insert the generated OpCon fault message as the value for the attribute.  
-**tags**                                       | header - Defines information if OpCon User defined Tags are to be used to include attributes in the ServiceNow submission. This is enabled if the rule **includeTagRouting** is set to True.
-**indicator**                                  | Defines what part of the tag should be used to identify the request. Supports TAG_END,  TAG_START, EXIT or DEFAULT. The DEFAULT value is used if there is no TAG_END or TAG_START match and TAG Routing is enabled.
-**indicatorValue**	                           | The value that is matched to the OpCon User defined tag (either the end or the start).
-**attribute**	                                 | Defines the attribute name that will be added to the JSON payload along with the value.
-**value**                                      | The value associated with the attribute.
+| Attribute | Value |
+|---|---|
+| **descriptionDefinition** | Defines the description to use instead of the default description defined in `Connector.config`. See [Customized description and title definitions](#customized-description-and-title-definitions) |
+| **titleDefinition** | Defines the title to use instead of the default title defined in `Connector.config`. See [Customized description and title definitions](#customized-description-and-title-definitions) |
+| **server** | Section — defines the address, company value, and incident URL template for the EasyVista instance |
+| **address** | The address of the EasyVista instance (production or test) |
+| **usesTls** | Whether the EasyVista instance requires TLS. Values: `true` or `false` (default: `true`) |
+| **company** | A string representing the company, included in the URL when communicating with EasyVista |
+| **viewIncidentUrlTemplate** | The URL definition used to display an incident ticket in EasyVista. This URL opens when the **Incident Ticket ID** of a job is selected in Solution Manager. See [Generate auto connection link](#generate-auto-connection-link) |
+| **rules** | Section — defines which functions are supported by the connector |
+| **includeJobLogAttachment** | Whether the job log should be attached to the incident ticket. Values: `true` or `false` (default: `true`) |
+| **includeTagRouting** | Whether OpCon job tags should be used for incident routing. Values: `true` or `false` (default: `false`) |
+| **includeCorrelationId** | Whether correlation information should be included in the submission to EasyVista. Values: `true` or `false` (default: `false`) |
+| **useTitleDefinitionForDescriptionDefinition** | Whether the title definition should be used as the value for the description attribute. Values: `true` or `false` (default: `false`) |
+| **credentials** | Section — defines the EasyVista login credentials |
+| **user** | The EasyVista user with sufficient privileges to submit requests. Must be encrypted using `Encrypt.exe` |
+| **password** | The password for the EasyVista user. Must be encrypted using `Encrypt.exe` |
+| **ticketDefinitions** | Section — defines required attributes added to the JSON payload |
+| **indicator** | A name that identifies this attribute to the connector |
+| **attribute** | The attribute name added to the JSON payload |
+| **value** | The value included with the attribute. The special value `DescriptionDefinition` inserts the generated OpCon failure message as the attribute value |
+| **ticketAdditionalFields** | Section — defines optional attributes added to the JSON payload |
+| **indicator** | A name that identifies this attribute to the connector |
+| **attribute** | The attribute name added to the JSON payload |
+| **value** | The value included with the attribute |
+| **tags** | Section — defines tag routing information when `includeTagRouting` is set to `true` |
+| **indicator** | Defines how the tag should be matched. Supports `TAG_END`, `TAG_START`, `EXIT`, or `DEFAULT` |
+| **indicatorValue** | The value matched against the OpCon job tag (start or end of the tag) |
+| **attribute** | The attribute name added to the JSON payload |
+| **value** | The value associated with the attribute |
 
-The server section of the template defines the address information associated with the EasyVista Instance. This allows a single connector the ability to submit requests to multiple EasyVista instances by simply creating multiple templates. The server section is required.
+The `server` section defines the address information for the EasyVista instance. A single connector can submit requests to multiple EasyVista instances by creating separate template files. The `server` section is required.
 
-The rules section of the template defines which rules should be used for the request. Values are either true or false. The rules section is required.
+The `rules` section defines which rules apply to the request. Values are either `true` or `false`. The `rules` section is required.
 
-The credentials section of the template defines the EasyVista user and password to be used for the connection. These values must be encrypted using the Encrypt.exe program. The credentials section is required.
+The `credentials` section defines the EasyVista user and password. These values must be encrypted using `Encrypt.exe`. The `credentials` section is required.
 
-The ticketDefinitions section defines required attributes that will be added to the payload. This includes either catalogueGui or catalogueCode, origin and description. The description attribute has a special value ‘DefinitionDescription’ which inserts the generated OpCon failure error message as the attribute value.
+The `ticketDefinitions` section defines required attributes added to the payload. This includes `catalogueGui` or `catalogueCode`, `origin`, and `description`. The `description` attribute accepts the special value `DefinitionDescription`, which inserts the generated OpCon failure message as the attribute value.
 
-The ticketAdditionalFields section defines optional attributes that will be added to the payload. 
+The `ticketAdditionalFields` section defines optional attributes added to the payload.
 
-The tags section defines incident routing information if OpCon Job User defined tags are used to route tickets. This functionality is enabled when the includeTagRouting rule is set to true. 
-The OpCon task tag definition can therefore be used to determine the routing of the ticket within the EasyVista environment. It is possible to define multiple attributes for each tag definition (except EXIT tag).
+The `tags` section defines incident routing when OpCon job tags are used to route tickets. This is enabled when `includeTagRouting` is set to `true`.
 
-Tag matching is performed, by first checking for an EXIT tag, followed by TAG_START and TAG_END values. 
+Tag matching is performed in the following order: `EXIT` first, then `TAG_START` and `TAG_END`, then `DEFAULT`.
 
-If a matching **EXIT** tag is found, no ticket is created. 
-If matching **TAG_END** or **TAG_START** values are found, the associated attributes will be included in the ticket creation request.
-If no match is found, the **DEFAULT** associated attributes will be included in the ticket creation.
+| Indicator | Description |
+|---|---|
+| **EXIT** | Matches against the complete job tag. If matched, no ticket is created |
+| **TAG_START** | Checks whether any job tag begins with the `indicatorValue` |
+| **TAG_END** | Checks whether any job tag ends with the `indicatorValue` |
+| **DEFAULT** | Used when no `TAG_END` or `TAG_START` match is found and tag routing is enabled |
 
-Tag routing is defined using the **tags** structure.
+Example template using environment variables for description and title:
 
-Indicator     | Description
-------------- | --------------------------------------------------------
-**EXIT**      | Performs a match of against the complete job tag. 
-**TAG_START** | Indicates that the job tags will be checked for a matching value (**Indicator Value** field) from the start of each job tag in the list of tags.
-**TAG_END**   | Indicates that the job tags will be checked for a matching value (**Indicator Value** field) from the end of each job tag in the list of tags.
-**DEFAULT**   | Defines the attributes to used when there is no tag match. 
-
-```
+```json
 {
-  "descriptionDefnition" : "date @EV_Date job (@EV_Job) of schedule (@EV_Schedule) running on server (@EV_Agent) failed with error 
-     code @EV_Errorcode",
+  "descriptionDefnition" : "date @EV_Date job (@EV_Job) of schedule (@EV_Schedule) running on server (@EV_Agent) failed with error code @EV_Errorcode",
   "titleDefinition" : "OpCon Task Failure (schedule @EV_Schedule job @EV_Job )",
   "server" : {
     "address" : "test-fr-vp-01.easyvista-training.com",
     "usesTls" : true,
-	"company" : "50009",
-	"viewIncidentUrlTemplate" : "https://test-fr-vp-01.easyvista-
-          training.com/autoconnect_mail.php?field1=5C0F051E590F056F10&field2=&field4=%7BAF1AE6AD-FF4B-41B0-93B3- 
-          99BEF6052B12%7D&field5=ViewDialog&field6={0}&field7=RFC_NUMBER"
+    "company" : "50009",
+    "viewIncidentUrlTemplate" : "https://test-fr-vp-01.easyvista-training.com/autoconnect_mail.php?field1=5C0F051E590F056F10&field2=&field4=%7BAF1AE6AD-FF4B-41B0-93B3-99BEF6052B12%7D&field5=ViewDialog&field6={0}&field7=RFC_NUMBER"
   },
   "rules" : {
     "includeJobLogAttachment" : true,
@@ -249,21 +265,21 @@ Indicator     | Description
       }]
   }]
 }
-
 ```
-The above sample template uses environment variables for the description and title definitions. When using this implementation, a $JOB:ADD event must be used and the environment variables defined within the job being added by the event.
 
-```
+When using environment variables, a `$JOB:ADD` event must be used in Notification Manager and the environment variables must be defined within the job being added by the event.
+
+Example template using `Connector.config` values for description and title:
+
+```json
 {
   "descriptionDefnition" : "",
   "titleDefinition" : "",
   "server" : {
     "address" : "test-fr-vp-01.easyvista-training.com",
     "usesTls" : true,
-	"company" : "50009",
-	"viewIncidentUrlTemplate" : "https://test-fr-vp-01.easyvista-
-          training.com/autoconnect_mail.php?field1=5C0F051E590F056F10&field2=&field4=%7BAF1AE6AD-FF4B-41B0-93B3- 
-          99BEF6052B12%7D&field5=ViewDialog&field6={0}&field7=RFC_NUMBER"
+    "company" : "50009",
+    "viewIncidentUrlTemplate" : "https://test-fr-vp-01.easyvista-training.com/autoconnect_mail.php?field1=5C0F051E590F056F10&field2=&field4=%7BAF1AE6AD-FF4B-41B0-93B3-99BEF6052B12%7D&field5=ViewDialog&field6={0}&field7=RFC_NUMBER"
   },
   "rules" : {
     "includeJobLogAttachment" : true,
@@ -332,88 +348,159 @@ The above sample template uses environment variables for the description and tit
       }]
   }]
 }
+```
+
+### Customized description and title definitions
+
+The description and title attribute values can be customized using environment variables. If using this option, the EasyVista job must be started in Notification Manager using a `$JOB:ADD` event instead of **Run Command**, because **Run Command** does not support environment variables.
+
+OpCon properties are mapped to environment variables. Environment variable names must start with `@EV_` to indicate they are EasyVista environment variables. During connector startup, all environment variables starting with `@EV_` are loaded into the mapping table and their values are inserted into the description and title attributes.
+
+Example template attribute values using environment variables:
 
 ```
-The above sample template uses values in the config file for the description and title definitions. 
+"descriptionDefnition" : "date @EV_Date job (@EV_Job) of schedule (@EV_Schedule) running on server (@EV_Agent) failed with error code @EV_Errorcode"
+"titleDefinition" : "OpCon Task Failure (schedule @EV_Schedule job @EV_Job )"
+```
 
-### Customized Description and Title Definitions
-The description and title attribute values can be customized by using environment variables. If using this option, the EasyVista task must be started in Notification Manager by using a $JOB:ADD event instead of Run Command as Run Command does not support Environment Variables.
-
-The OpCon properties are mapped to environment variables and these environment variables are then used in the message. When defining these environment variables the names must start with the value @EV_ indicating that the environment variable is an EasyVista environment variable. During connector startup, any environment variables starting with @EV_ are loaded into the mapping table. These values associated with the variables are then inserted into the values of the description and title attributes.
+At runtime, the variables are resolved to their values:
 
 ```
-  "descriptionDefnition" : "date @EV_Date job (@EV_Job) of schedule (@EV_Schedule) running on server (@EV_Agent) failed with error 
-     code @EV_Errorcode",
-  "titleDefinition" : "OpCon Task Failure (schedule @EV_Schedule job @EV_Job )",
-```
-Looking at the above extract from the template, the variables in the attribute value of the description attribute will change as follows:
-
-```  
-date @EV_Date job (@EV_Job) of schedule (@EV_Schedule) running on server (@EV_Agent) failed with error code @EV_Errorcode
-OpCon Task Failure (schedule @EV_Schedule job @EV_Job )
-
 date 2021-10-26 job (EvFailure_DEF) of schedule (EasyVista Tests) running on server (LocalWin) failed with error code 0000000001
 OpCon Task Failure (schedule EasyVista Tests job EvFailure_DEF )
 ```
-### Generate Auto Connection Link
-The viewIncidentUrlTemplate attribute of the server section in the template, is used to create a direct link to the created Incident ticket. The link can be generated for the environment by using the following procedure within EasyVista.
 
-- Select Administration > Access Management > Auto Connection Link in the EasyVista menu.
-- Enter the following parameters
-  - Form Name = DialogF0_Incidents
-  - Field Name = RFC_NUMBER
-  - Value = Incident_Number
-- Click Generate Link
-- After the link has been generated, copy and then paste the generated link into the template changing the Incident_Number to {0}. 
-  (field5=ViewDialog&field6=Incident_Number&field7=RFC_NUMBER)
-  (field5=ViewDialog&field6={0}&field7=RFC_NUMBER)
+### Generate auto connection link
 
-### OpCon Notification Manager Definition
-Notification Manager is used to execute the EasyVista Connector when a task completes with a failure condition. Using this approach allows the tasks to be added to the rule instead of defining a failure event on every task. If using environment variables to customize the description and title fields, a $JOB:Add event must be used instead of Run Command as the Run Command option does not support environment variables.
+The `viewIncidentUrlTemplate` attribute in the `server` section of the template creates a direct link to the created incident ticket. Generate this URL in EasyVista using the following procedure.
 
-#### Configuring $JOB:ADD event
-Using Notification Manager, select the Jobs tab and create a new Group called EasyVista.
-Once the Group has been created, select the EasyVista Group, perform a ‘right-click’ and select Add Job Trigger. In the Add Job Trigger selection, select Job Failed.
+To generate the auto connection link, complete the following steps:
 
-In the Notification Definitions section, select Send OpCon/xps Events. In the Event tab, select Add event and select the $JOB:ADD template.
+1. In EasyVista, go to **Administration** > **Access Management** > **Auto Connection Link**.
+2. Enter the following parameters:
+   - **Form Name**: `DialogF0_Incidents`
+   - **Field Name**: `RFC_NUMBER`
+   - **Value**: `Incident_Number`
+3. Select the **Generate Link** button.
+4. Copy the generated link and paste it into the `viewIncidentUrlTemplate` field in the template file.
+5. In the pasted URL, replace the `Incident_Number` portion with `{0}`:
+   - Before: `field5=ViewDialog&field6=Incident_Number&field7=RFC_NUMBER`
+   - After: `field5=ViewDialog&field6={0}&field7=RFC_NUMBER`
 
-Insert the following definition to perform a $JOB:ADD of the Windows task that will execute the EasyVista Connector.
+### OpCon Notification Manager definition
+
+Notification Manager triggers the EasyVista Connector when a job completes with a failure condition. Using Notification Manager allows multiple jobs to be covered by a single rule instead of defining a failure event on each individual job.
+
+If using environment variables to customize the description and title fields, use a `$JOB:ADD` event instead of **Run Command**, because **Run Command** does not support environment variables.
+
+#### Configuring a `$JOB:ADD` event
+
+To configure a `$JOB:ADD` event in Notification Manager, complete the following steps:
+
+1. In Notification Manager, select the **Jobs** tab.
+2. Select the **Add Group** button and create a new group called `EasyVista`.
+3. Right-click the **EasyVista** group and select **Add Job Trigger**.
+4. In the **Add Job Trigger** dialog, select **Job Failed**.
+5. In the **Notification Definitions** section, select **Send OpCon/xps Events**.
+6. Select the **Event** tab, select the **Add event** button, and select the **`$JOB:ADD`** template.
+7. Insert the following definition:
 
 ```
 [[$SCHEDULE DATE]],AdHoc,EASY-VISTA,DAILY,ID=[[$JOBID]];MACH=[[$MACHINE NAME]];SCHED=[[$SCHEDULE NAME]];JOB=[[$JOB NAME]];ECODE=[[$JOB TERMINATION]];SID=[[$SCHEDULE ID]];SINST=[[$SCHEDULE INST]],Y
 ```
+
 #### Configuring Run Command
-Using Notification Manager, select the Jobs tab and create a new Group called EasyVista.
-Once the Group has been created, select the EasyVista Group, perform a ‘right-click’ and select Add Job Trigger. In the Add Job Trigger selection, select Job Failed.
 
-In the Run Command tab, enter the following:
+To configure a Run Command in Notification Manager, complete the following steps:
 
-**Command**			       C:\Connectors\EasyVista\EasyVista.exe -a [[$MACHINE NAME]] -s [[$SCHEDULE NAME]] -jn [[$JOB NAME]] -e [[$JOB TERMINATION]] -sd [[$SCHEDULE DATE-EVIS]] -si [[$SCHEDULE ID]] -sn [[$SCHEDULE INST]] -t bas_easyvista.json
+1. In Notification Manager, select the **Jobs** tab.
+2. Select the **Add Group** button and create a new group called `EasyVista`.
+3. Right-click the **EasyVista** group and select **Add Job Trigger**.
+4. In the **Add Job Trigger** dialog, select **Job Failed**.
+5. Select the **Run Command** tab.
+6. In the **Command** field, enter the following, replacing paths as appropriate for your environment:
 
-                           Where 
-                           C:\Connectors\EasyVista\EasyVista.exe 	is the location of the connector.
-                           -a [[$MACHINE NAME]]		                resolves to the agent name
-                           -s [[$SCHEDULE NAME]] 		            resolves to the schedule name
-                           -jn [[$JOB NAME]]			            resolves to the job name
-                           -e [[JOB TERMINATION]]		            resolves to the job termination code
-	                       -sd [[$SCHEDULE DATE-EVIS]]	            resolves to the date (format YYYY-MM-DD)
-	                       -si [[$SCHEDULE ID]]		                resolves to the schedule ID
-	                       -sn [[$SCHEDULE INST]]		            resolves to the schedule instance
-	                       -t bas_easyvista.json		            which template in the templates folder to use
+```
+C:\Connectors\EasyVista\EasyVista.exe -a [[$MACHINE NAME]] -s [[$SCHEDULE NAME]] -jn [[$JOB NAME]] -e [[$JOB TERMINATION]] -sd [[$SCHEDULE DATE-EVIS]] -si [[$SCHEDULE ID]] -sn [[$SCHEDULE INST]] -t bas_easyvista.json
+```
 
-**Working Directory**		C:\Connectors\EasyVista
+| Argument | Resolves to |
+|---|---|
+| `-a [[$MACHINE NAME]]` | The agent name |
+| `-s [[$SCHEDULE NAME]]` | The schedule name |
+| `-jn [[$JOB NAME]]` | The job name |
+| `-e [[$JOB TERMINATION]]` | The job termination code |
+| `-sd [[$SCHEDULE DATE-EVIS]]` | The date in `YYYY-MM-DD` format |
+| `-si [[$SCHEDULE ID]]` | The schedule ID |
+| `-sn [[$SCHEDULE INST]]` | The schedule instance |
+| `-t bas_easyvista.json` | The template file in the `templates` directory to use |
 
-**Batch User**			    Use Service Account 	                The batch User under which the task will be run.
+7. In the **Working Directory** field, enter `C:\Connectors\EasyVista`.
+8. In the **Batch User** field, select **Use Service Account**.
 
-#### Definition of EASY-VISTA task in OpCon AdHoc workflow
-If the $JOB:ADD option was selected when configuring Notification Manager, add the EASY-VISTA task to the AdHoc schedule.
-Create a Windows Job, associated with the agent that the EasyVista Connector was installed on. 
+#### Definition of the EASY-VISTA job in the OpCon AdHoc schedule
 
-- Set the Command Line, inserting the full path name of the EasyVista Connector executable and the required arguments. 
-  C:\Connectors\EasyVista\EasyVista.exe -a [[JI.MACH]] -s [[JI.SCHED]] -jn [[JI.JOB]] -e [[JI.ECODE]] -sd [[$SCHEDULE DATE-EVIS]] -si [[JI.SID]] -sn [[JI.SINST]] -t template
-- Set the -t option (template) to the template value defined for this EasyVista instance. The template must be placed in the templates directory of the EasyVista installation.
-- Set the working directory to the full path of the EasyVista Connector installation directory
-- Create a frequency called ALLDAYS allowing the task to be scheduled 7 days a week.
-- Select Disable Build.
-- Select Allow Multi-Instance.
-- Add the required environment Variables matching the definitions in the descriptionDefinition and titleDefinition fields of the template.
+If the `$JOB:ADD` option was selected when configuring Notification Manager, add the `EASY-VISTA` job to the **AdHoc** schedule.
+
+To create the AdHoc job, complete the following steps:
+
+1. Create a Windows job associated with the agent where the EasyVista Connector is installed.
+2. In the **Command Line** field, enter the full path to the EasyVista Connector executable and the required arguments:
+
+```
+C:\Connectors\EasyVista\EasyVista.exe -a [[JI.MACH]] -s [[JI.SCHED]] -jn [[JI.JOB]] -e [[JI.ECODE]] -sd [[$SCHEDULE DATE-EVIS]] -si [[JI.SID]] -sn [[JI.SINST]] -t template
+```
+
+3. Set the `-t` argument (template) to the template file name defined for this EasyVista instance. The template file must be placed in the `templates` directory of the EasyVista installation.
+4. In the **Working Directory** field, enter the full path to the EasyVista Connector installation directory.
+5. Create a frequency named `ALLDAYS` that allows the job to be scheduled 7 days a week.
+6. Select the **Disable Build** option.
+7. Select the **Allow Multi-Instance** option.
+8. Add the required environment variables matching the `descriptionDefinition` and `titleDefinition` fields in the template.
+
+## Security considerations
+
+All user and password values in `Connector.config` and template files must be encrypted using the `Encrypt.exe` utility. The `TOKEN` value in the `[OPCON API]` section must also be encrypted. The OpCon REST API must be configured to use TLS (`USES_TLS=True`).
+
+## FAQs
+
+**What is the `Encrypt.exe` utility and when do I use it?**
+`Encrypt.exe` is a utility included with the connector that applies 64-bit encryption to sensitive values. Use it to encrypt user credentials and the OpCon API token before placing them in `Connector.config` or a template file. Run `Encrypt.exe -v <value>` to display the encrypted output, then copy it into the configuration.
+
+**Can the connector connect to multiple EasyVista instances?**
+Yes. Create a separate template file for each EasyVista instance. When configuring Notification Manager or the AdHoc job, specify which template to use with the `-t` argument. Each template file can point to a different EasyVista address, company, and credentials.
+
+**What is the `$SCHEDULE DATE-EVIS` property and why is it required?**
+`$SCHEDULE DATE-EVIS` is a global OpCon property that stores the schedule date in `yyyy-MM-dd` format. The EasyVista Connector requires this date format. Create this property in OpCon and set its value to `yyyy-MM-dd` before configuring Notification Manager.
+
+**What is the difference between `$JOB:ADD` and Run Command in Notification Manager?**
+**Run Command** runs the connector directly with command-line arguments. **`$JOB:ADD`** adds a Windows job to the AdHoc schedule that then runs the connector. Use `$JOB:ADD` when you need to pass environment variables to customize the description and title definitions, since **Run Command** does not support environment variables.
+
+**What does the `EXIT` tag do?**
+When tag routing is enabled (`includeTagRouting: true`), the `EXIT` tag causes the connector to exit without creating an incident ticket if an OpCon job contains a matching tag value. This is useful for suppressing tickets for specific jobs that should not create EasyVista incidents when they fail.
+
+**Where can I find the OpCon application token?**
+See the OpCon REST API documentation for instructions on generating an application token. Once generated, encrypt the token value using `Encrypt.exe` before adding it to `Connector.config`.
+
+## Glossary
+
+**`Connector.config`** — The main configuration file for the EasyVista Connector. It defines the OpCon API connection, proxy settings, debug mode, and default incident description and title templates.
+
+**Template** — A JSON configuration file in the `templates` directory that defines the EasyVista instance connection, credentials, rules, and ticket attributes for one EasyVista environment.
+
+**`Encrypt.exe`** — The encryption utility included with the EasyVista Connector. All credential values and the OpCon API token must be encrypted using this utility before being placed in configuration files.
+
+**`$SCHEDULE DATE-EVIS`** — A global OpCon property storing the schedule date in `yyyy-MM-dd` format. Required by the EasyVista Connector for date formatting in incident descriptions.
+
+**Tag routing** — A feature controlled by the `includeTagRouting` rule in the template. When enabled, the connector uses OpCon job tags to route incident tickets to specific EasyVista queues or to suppress ticket creation.
+
+**`EXIT` tag** — A special tag routing indicator that prevents the connector from creating an incident ticket when a matching OpCon job tag is found.
+
+**`viewIncidentUrlTemplate`** — A URL pattern in the template's `server` section that generates a direct link to an EasyVista incident ticket. The connector replaces `{0}` in the URL with the incident number at runtime.
+
+**AdHoc schedule** — An OpCon schedule used to run on-demand jobs. The EASY-VISTA job is added to the AdHoc schedule when using the `$JOB:ADD` Notification Manager configuration.
+
+**Related topics:**
+
+- [Overview](./overview.md)
+- [Operation](./operation.md)
