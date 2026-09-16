@@ -43,7 +43,7 @@ If the **Incident Ticket ID** field is empty, the connector may not have run for
 Selecting the **Incident Ticket ID** value in the Job Selection dialog opens the EasyVista incident in a browser using the `viewIncidentUrlTemplate` defined in the connector template. This requires that the URL template is correctly configured in the template file.
 
 **Where are the connector log files located?**
-The connector writes log files to the `log` subdirectory of the connector installation directory. Enable debug mode by setting `DEBUG=ON` in the `[GENERAL]` section of `Connector.config` to capture additional detail for troubleshooting.
+The connector writes its log to `easyvista.log` in the `log` subdirectory of the connector installation directory. When that file reaches 100 MB it rolls, and the rolled file is written to a subdirectory named for the month with a date-stamped, indexed name — for example `log\2026-09\easyvista_2026-09-16.0.log`. Rolled files are retained indefinitely unless you configure pruning, so include the `log` directory in whatever disk monitoring you apply to the connector host. Enable debug mode by setting `DEBUG=ON` in the `[GENERAL]` section of `Connector.config` to capture additional detail for troubleshooting.
 
 **What happens if the EasyVista system is unavailable when a job fails?**
 If the EasyVista REST API is unreachable, the connector will fail to create the incident ticket and log an error. The OpCon job failure notification will still fire, but no incident ticket will be created. You will need to create the ticket manually or rerun the connector once EasyVista is available.

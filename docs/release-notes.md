@@ -12,19 +12,25 @@ tags:
 
 This connector requires OpCon Release 21.0 or higher.
 
+:::note
+Release numbers on this page are not in date order. 18.3.1 was released after 19.1.1, from a separate development line.
+:::
+
 ## 21
 
 ### 21.1.5
 
-### What's new
+2025 November
+
+#### What's new
 
 **CON-370**: Implemented encryption of the `TOKEN` value in `Connector.config` using the `Encrypt.exe` utility.
 
-### Why this matters
+#### Why this matters
 
 Token values stored in `Connector.config` must now be encrypted using `Encrypt.exe` before use. This protects OpCon API credentials at rest and aligns the connector with the encryption standard applied to other credential values in the configuration file.
 
-### Upgrade notes
+#### Upgrade notes
 
 When upgrading to 21.1.5, encrypt the `TOKEN` value in the `[OPCON API]` section of `Connector.config` using `Encrypt.exe` before restarting the connector.
 
@@ -32,7 +38,9 @@ When upgrading to 21.1.5, encrypt the `TOKEN` value in the `[OPCON API]` section
 
 ### 21.0.4
 
-### What's new
+2024 June
+
+#### What's new
 
 **CONNUTIL-639**: Implemented a new tag type called `EXIT` that causes the connector to exit without creating an incident ticket when a matching OpCon job tag is encountered. This option is only available when tag routing is enabled.
 
@@ -48,11 +56,11 @@ Ticket creation terminated for the job <schedule>.<job> as EXIT tag defined
 Connector terminated due to configuration error - tag routing enabled, but no default routing tag defined
 ```
 
-### Bug fixes
+#### Bug fixes
 
 **CONNUTIL-633**: Fixed the order in which files appear in the EasyVista ticket to match the order extracted from OpCon.
 
-### Upgrade notes
+#### Upgrade notes
 
 When upgrading to 21.0.4 with tag routing enabled, verify that a `DEFAULT` tag is defined in each template. If the `DEFAULT` tag is missing, the connector will not start.
 
@@ -60,7 +68,9 @@ When upgrading to 21.0.4 with tag routing enabled, verify that a `DEFAULT` tag i
 
 ### 21.0.3
 
-### What's new
+2024 March
+
+#### What's new
 
 **CONNUTIL-629**: Fixed an issue where Unix job logs were not correctly uploaded to the EasyVista incident.
 
@@ -68,6 +78,61 @@ When upgrading to 21.0.4 with tag routing enabled, verify that a `DEFAULT` tag i
 
 ### 21.0.2
 
-### What's new
+2022 July
+
+#### What's new
 
 **CONNUTIL-575**: Updated the web service client to ignore unknown API fields returned by the EasyVista REST API.
+
+---
+
+### 21.0.1
+
+2022 April
+
+#### What's new
+
+:eight_spoked_asterisk: First release of the EasyVista Connector for OpCon 21.
+
+---
+
+## 20
+
+### 20.0.1
+
+2021 October
+
+#### What's new
+
+No change detail is available for this release. It was built from the same development line as 18.3.1 and carries the same tag routing enhancement, allowing more than one attribute to be set for a routing entry.
+
+---
+
+## 19
+
+### 19.1.1
+
+2020 August
+
+#### What's new
+
+No change detail is available for this release.
+
+---
+
+## 18
+
+### 18.3.1
+
+2021 October
+
+#### What's new
+
+:eight_spoked_asterisk: Introduced template files, allowing one connector to submit requests to more than one EasyVista instance.
+
+:eight_spoked_asterisk: Added proxy server support.
+
+:eight_spoked_asterisk: Added tag routing, using OpCon job tags to route incident tickets.
+
+:eight_spoked_asterisk: Extended tag routing so that more than one attribute can be set for a routing entry.
+
