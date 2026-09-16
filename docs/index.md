@@ -1,4 +1,10 @@
 ---
+title: EasyVista Connector
+description: "Create EasyVista incident tickets automatically when OpCon jobs fail: installation, configuration, and operation."
+tags:
+  - Conceptual
+  - System Administrator
+  - EasyVista Connector
 slug: '/'
 sidebar_label: 'EasyVista Connector'
 hide_table_of_contents: true
